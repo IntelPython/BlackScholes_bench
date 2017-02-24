@@ -24,11 +24,11 @@ except:
 try:
     import itimer as it
     now = it.itime
-    mops = it.itime_mops_now
+    get_mops = it.itime_mops_now
 except:
     from timeit import default_timer
     now = default_timer
-    mops = lambda t0, n: n / (1.e6 * (now() - t0))
+    get_mops = lambda t0, n: n / (1.e6 * (now() - t0))
 
 
 print("Using ", numpy_ver, " numpy")
@@ -121,7 +121,7 @@ def run(name, alg, sizes=15, step=2, nopt=1024, nparr=True, dask=False, pass_arg
 			t0 = now()
 			for _ in iterations:
 				alg(nopt, price, strike, t, RISK_FREE, VOLATILITY)
-		mops = mops(t0, nopt)
+		mops = get_mops(t0, nopt)
 		print("MOPS: {}".format(mops*2*repeat), args.text)
 		nopt *= step
 		repeat -= step

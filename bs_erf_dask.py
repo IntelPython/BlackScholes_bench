@@ -28,7 +28,8 @@ def black_scholes ( nopt, price, strike, t, rate, vol):
 
 	call = P * d1 - Se * d2
 	put = call - P + Se
+	res = da.stack((put, call))
 	
-	return da.compute(call, put)
+	return da.compute(res)
 
 base_bs_erf.run("Dask", black_scholes, dask=True)
