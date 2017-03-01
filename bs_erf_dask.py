@@ -3,7 +3,7 @@ import dask.array as da
 from dask.array import log, sqrt, exp
 from base_bs_erf import erf, invsqrt
 
-def black_scholes ( nopt, price, strike, t, rate, vol):
+def black_scholes ( nopt, price, strike, t, rate, vol, schd=None):
 	mr = -rate
 	sig_sig_two = vol * vol * 2
 
@@ -28,8 +28,7 @@ def black_scholes ( nopt, price, strike, t, rate, vol):
 
 	call = P * d1 - Se * d2
 	put = call - P + Se
-	res = da.stack((put, call))
 	
-	return da.compute(res)
+	return da.compute( da.stack((put, call)), get=schd )
 
 base_bs_erf.run("Dask", black_scholes, dask=True)

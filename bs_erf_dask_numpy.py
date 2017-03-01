@@ -1,8 +1,8 @@
 import base_bs_erf
 import numpy as np
+import dask.array as da
 from numpy import log, exp
 from base_bs_erf import erf, invsqrt
-import dask.array as da
 
 def black_scholes ( nopt, price, strike, t, rate, vol ):
 	mr = -rate
@@ -32,7 +32,7 @@ def black_scholes ( nopt, price, strike, t, rate, vol ):
 	
 	return np.stack((call, put))
 
-def black_scholes_dask ( nopt, price, strike, t, rate, vol ):
-	return da.map_blocks( black_scholes, nopt, price, strike, t, rate, vol, new_axis=0 ).compute()
+def black_scholes_dask ( nopt, price, strike, t, rate, vol, schd=None ):
+	return da.map_blocks( black_scholes, nopt, price, strike, t, rate, vol, new_axis=0 ).compute(get = schd)
 
 base_bs_erf.run("Dask-agg", black_scholes_dask, dask=True)
