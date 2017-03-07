@@ -70,73 +70,75 @@ def gen_data(nopt):
         rnd.uniform(TL, TH, nopt),
         )
 
-##############################################	
+##############################################    
 
-def run(name, alg, sizes=15, step=2, nopt=1024, nparr=True, dask=False, pass_args=False):
-	import argparse
-	parser = argparse.ArgumentParser()
-	parser.add_argument('--steps', required=False, default=sizes,  help="Number of steps")
-	parser.add_argument('--step',  required=False, default=step,   help="Factor for each step")
-	parser.add_argument('--chunk', required=False, default=2000000,help="Chunk size for Dask")
-	parser.add_argument('--size',  required=False, default=nopt,   help="Initial data size")
-	parser.add_argument('--repeat',required=False, default=100,    help="Iterations inside measured region")
-	parser.add_argument('--dask',  required=False, default="sq",   help="Dask scheduler: sq, mt, mp")
-	parser.add_argument('--text',  required=False, default="",     help="Print with each result")
-	
-	args = parser.parse_args()
-	sizes= int(args.steps)
-	step = int(args.step)
-	nopt = int(args.size)
-	chunk= int(args.chunk)
-	repeat=int(args.repeat)
-	kwargs={}
+def run(name, alg, sizes=15, step=2, nopt=1024, nparr=True, dask=False, pass_args=False, verbose=True):
+    import argparse
+    parser = argparse.ArgumentParser()
+    parser.add_argument('--steps', required=False, default=sizes,  help="Number of steps")
+    parser.add_argument('--step',  required=False, default=step,   help="Factor for each step")
+    parser.add_argument('--chunk', required=False, default=2000000,help="Chunk size for Dask")
+    parser.add_argument('--size',  required=False, default=nopt,   help="Initial data size")
+    parser.add_argument('--repeat',required=False, default=100,    help="Iterations inside measured region")
+    parser.add_argument('--dask',  required=False, default="sq",   help="Dask scheduler: sq, mt, mp")
+    parser.add_argument('--text',  required=False, default="",     help="Print with each result")
+    
+    args = parser.parse_args()
+    sizes= int(args.steps)
+    step = int(args.step)
+    nopt = int(args.size)
+    chunk= int(args.chunk)
+    repeat=int(args.repeat)
+    kwargs={}
 
-	if(dask):
-		import dask
-		import dask.multiprocessing
-		import dask.array as da
-		dask_modes = {
-		    "sq": dask.async.get_sync,
-		    "mt": dask.threaded.get,
-		    "mp": dask.multiprocessing.get
-		}
-		kwargs = {"schd": dask_modes[args.dask]}
-		name += "-"+args.dask
+    if(dask):
+        import dask
+        import dask.multiprocessing
+        import dask.array as da
+        dask_modes = {
+            "sq": dask.async.get_sync,
+            "mt": dask.threaded.get,
+            "mp": dask.multiprocessing.get
+        }
+        kwargs = {"schd": dask_modes[args.dask]}
+        name += "-"+args.dask
 
-	for i in xrange(sizes):
-		price, strike, t = gen_data(nopt)
-		if not nparr:
-			call = [0.0 for i in range(nopt)]
-			put = [-1.0 for i in range(nopt)]
-			price=list(price)
-			strike=list(strike)
-			t=list(t)
-			repeat=1 # !!!!! ignore repeat count
-		if dask:
-			assert(not pass_args)
-			price = da.from_array(price, chunks=(chunk,), name=False)
-			strike = da.from_array(strike, chunks=(chunk,), name=False)
-			t = da.from_array(t, chunks=(chunk,), name=False)
-		if pass_args:
-			call = np.zeros(nopt, dtype=np.float64)
-			put  = -np.ones(nopt, dtype=np.float64)
-		iterations = xrange(repeat)
-		print("ERF: {}: Size: {}".format(name, nopt)),
-		sys.stdout.flush()
+    for i in xrange(sizes):
+        price, strike, t = gen_data(nopt)
+        if not nparr:
+            call = [0.0 for i in range(nopt)]
+            put = [-1.0 for i in range(nopt)]
+            price=list(price)
+            strike=list(strike)
+            t=list(t)
+            repeat=1 # !!!!! ignore repeat count
+        if dask:
+            assert(not pass_args)
+            price = da.from_array(price, chunks=(chunk,), name=False)
+            strike = da.from_array(strike, chunks=(chunk,), name=False)
+            t = da.from_array(t, chunks=(chunk,), name=False)
+        if pass_args:
+            call = np.zeros(nopt, dtype=np.float64)
+            put  = -np.ones(nopt, dtype=np.float64)
+        iterations = xrange(repeat)
+        if verbose:
+            print("ERF: {}: Size: {}".format(name, nopt)),
+            sys.stdout.flush()
 
-		if pass_args:
-			alg(nopt, price, strike, t, RISK_FREE, VOLATILITY, call, put) #warmup
-			t0 = now()
-			for _ in iterations:
-				alg(nopt, price, strike, t, RISK_FREE, VOLATILITY, call, put, **kwargs)
-		else:
-			alg(nopt, price, strike, t, RISK_FREE, VOLATILITY) #warmup
-			t0 = now()
-			for _ in iterations:
-				alg(nopt, price, strike, t, RISK_FREE, VOLATILITY, **kwargs)
-		mops = get_mops(t0, nopt)
-		print("MOPS: {}".format(mops*2*repeat), args.text)
-		nopt *= step
-		repeat -= step
-		if repeat < 1:
-		   repeat = 1
+        if pass_args:
+            alg(nopt, price, strike, t, RISK_FREE, VOLATILITY, call, put) #warmup
+            t0 = now()
+            for _ in iterations:
+                alg(nopt, price, strike, t, RISK_FREE, VOLATILITY, call, put, **kwargs)
+        else:
+            alg(nopt, price, strike, t, RISK_FREE, VOLATILITY) #warmup
+            t0 = now()
+            for _ in iterations:
+                alg(nopt, price, strike, t, RISK_FREE, VOLATILITY, **kwargs)
+        mops = get_mops(t0, nopt)
+        if verbose:
+            print("MOPS: {}".format(mops*2*repeat), args.text)
+        nopt *= step
+        repeat -= step
+        if repeat < 1:
+           repeat = 1
