@@ -1,5 +1,8 @@
-from bs_erf_naive import black_scholes_args
-from bs_erf_threading import main
+from multiprocessing import cpu_count
+from bs_threading import bs_runner
+from bs_naive import black_scholes_args
+import base_bs_erf
 
 if __name__ == '__main__':
-    main(__file__, black_scholes_args)
+    bsr = bs_runner(black_scholes_args, cpu_count())
+    base_bs_erf.run(__file__, bsr, pass_args=True)

@@ -1,4 +1,3 @@
-import base_bs_erf
 from math import log, sqrt, exp, erf
 import numpy as np
 invsqrt = lambda x: 1.0/sqrt(x)
@@ -63,7 +62,3 @@ def black_scholes_map(nopt, price, strike, t, rate, vol):
     call = P * d1 - Se * d2
     put = call - P + Se
     return call, put
-
-
-if __name__ == '__main__':
-    base_bs_erf.run(__file__, black_scholes_args, nparr=False, pass_args=True)

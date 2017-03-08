@@ -1,6 +1,9 @@
-from bs_erf_apply import main
 from multiprocessing.pool import ThreadPool
-from bs_erf_numpy import black_scholes
+from multiprocessing import cpu_count
+from bs_apply import bs_runner
+from bs_numpy import black_scholes
+import base_bs_erf
 
 if __name__ == '__main__':
-    main(__file__, black_scholes, ThreadPool)
+    bsr = bs_runner(black_scholes, ThreadPool(cpu_count()), cpu_count())
+    base_bs_erf.run(__file__, bsr, pass_args=False)

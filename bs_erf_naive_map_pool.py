@@ -1,6 +1,10 @@
-from bs_erf_map import main
 from multiprocessing import Pool
-from bs_erf_naive import black_scholes_map
+from multiprocessing import cpu_count
+from bs_map import bs_runner
+from bs_naive import black_scholes_map
+import base_bs_erf
 
 if __name__ == '__main__':
-    main(__file__, black_scholes_map, Pool)
+    n = int(cpu_count()/2)
+    bsr = bs_runner(black_scholes_map, Pool(n))
+    base_bs_erf.run(__file__, bsr, pass_args=False)

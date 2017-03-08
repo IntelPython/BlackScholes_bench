@@ -1,4 +1,3 @@
-import base_bs_erf
 import numpy as np
 from numpy import log, exp
 from base_bs_erf import erf, invsqrt
@@ -34,7 +33,3 @@ def black_scholes(nopt, price, strike, t, rate, vol):
 
 def black_scholes_args(nopt, price, strike, t, rate, vol, call, put):
     call[:], put[:] = black_scholes(nopt, price, strike, t, rate, vol)
-    
-
-if __name__ == '__main__':
-    base_bs_erf.run(__file__, black_scholes)
