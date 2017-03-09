@@ -10,7 +10,7 @@ for i in `ls bs_erf_*.py | grep _mpi`; do
     mpirun -n 16 ${PYTHON:-python} $i $* | tee -a logs/$i.log;
 done
 ipcluster start -n 16 --daemonize=True
-sleep 5; sync
+sync; sleep 20; sync
 for i in `ls bs_erf_*.py | grep _ipyparallel`; do
     echo -e "\n$i:"
     ${PYTHON:-python} $i $* | tee -a logs/$i.log
