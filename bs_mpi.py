@@ -8,7 +8,6 @@ class bs_runner(object):
 
     def __call__(self, nopt, price, strike, t, rate, vol, call, put):
         comm = MPI.COMM_WORLD
-        rank = comm.Get_rank()
         noptpp = int(nopt/self.nump)
         
         myprice = np.empty(noptpp, dtype=np.float64)

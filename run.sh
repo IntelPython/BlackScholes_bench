@@ -7,7 +7,7 @@ for i in `ls bs_erf_*.py | egrep -v '_mpi|_ipyparallel'`; do
 done
 for i in `ls bs_erf_*.py | grep _mpi`; do
     echo -e "\n$i:"
-    mpirun -n 16 ${PYTHON:-python} $i $* | tee -a logs/$i.log;
+    mpirun -genv I_MPI_SHM_LMT=shm -n 16 ${PYTHON:-python} $i $* | tee -a logs/$i.log;
 done
 ipcluster start -n 16 --daemonize=True
 sync; sleep 20; sync
