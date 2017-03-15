@@ -1,7 +1,9 @@
 #!/bin/bash
 
+export MKL_NUM_THREADS=1
+
 mkdir -p logs
-for i in `ls bs_erf_*.py | egrep -v '_mpi|_ipyparallel'`; do
+for i in `ls bs_erf_*.py | egrep -v '_mpi|_ipyparallel|pool'`; do
     echo -e "\n$i:"
     ${PYTHON:-python} $i $* | tee -a logs/$i.log
 done
@@ -16,3 +18,7 @@ for i in `ls bs_erf_*.py | grep _ipyparallel`; do
     ${PYTHON:-python} $i $* | tee -a logs/$i.log
 done
 ipcluster stop
+for i in `ls bs_erf_*pool*.py`; do
+    echo -e "\n$i:"
+    ${PYTHON:-python} $i $* | tee -a logs/$i.log
+done
