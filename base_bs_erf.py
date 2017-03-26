@@ -19,9 +19,9 @@ try:
     from numpy import invsqrt
     numpy_ver += "-invsqrt"
 except:
-    from numba import jit
+    #from numba import jit
     invsqrt = lambda x: 1.0/np.sqrt(x)
-    invsqrt = jit(['f8(f8)','f8[:](f8[:])'])(invsqrt)
+    #invsqrt = jit(['f8(f8)','f8[:](f8[:])'])(invsqrt)
 
 try:
     import itimer as it

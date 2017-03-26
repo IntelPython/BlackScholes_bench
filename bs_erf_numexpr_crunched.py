@@ -16,4 +16,5 @@ def black_scholes ( nopt, price, strike, t, rate, vol ):
         
 #ne.set_vml_num_threads(ne.detect_number_of_cores())
 ne.set_num_threads(ne.detect_number_of_cores())
+ne.set_vml_accuracy_mode('high')
 base_bs_erf.run("Numexpr-opt", black_scholes)
