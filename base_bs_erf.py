@@ -24,6 +24,7 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 
+from __future__ import print_function
 import numpy as np
 from random import seed, uniform
 import sys
@@ -147,7 +148,7 @@ def run(name, alg, sizes=15, step=2, nopt=1024, nparr=True, dask=False, pass_arg
 			call = np.zeros(nopt, dtype=np.float64)
 			put  = -np.ones(nopt, dtype=np.float64)
 		iterations = xrange(repeat)
-		print("ERF: {}: Size: {}".format(name, nopt)),
+		print("ERF: {}: Size: {}".format(name, nopt), end=' ')
 		sys.stdout.flush()
 
 		if pass_args:
@@ -161,7 +162,7 @@ def run(name, alg, sizes=15, step=2, nopt=1024, nparr=True, dask=False, pass_arg
 			for _ in iterations:
 				alg(nopt, price, strike, t, RISK_FREE, VOLATILITY, **kwargs)
 		mops = get_mops(t0, nopt)
-		print("MOPS: {}".format(mops*2*repeat), args.text)
+		print("MOPS:", mops*2*repeat, args.text)
 		nopt *= step
 		repeat -= step
 		if repeat < 1:

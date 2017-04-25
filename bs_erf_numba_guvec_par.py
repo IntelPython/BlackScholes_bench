@@ -28,15 +28,15 @@ import base_bs_erf
 import numba as nb
 from math import log, sqrt, exp, erf
 
-def black_scholes_numba_opt(price, strike, t, mr, sig_sig_two):
-        P = price
-        S = strike
-        T = t
+def black_scholes_numba_opt(price, strike, t, mr, sig_sig_two, vol, call, put):
+        P = float( price [0] )
+        S = strike [0]
+        T = t [0]
         
         a = log(P / S)
-        b = T * mr
+        b = T * mr[0]
         
-        z = T * sig_sig_two
+        z = T * sig_sig_two[0]
         c = 0.25 * z
         y = 1./sqrt(z)
         
@@ -47,17 +47,18 @@ def black_scholes_numba_opt(price, strike, t, mr, sig_sig_two):
         d2 = 0.5 + 0.5 * erf(w2)
         
         Se = exp(b) * S
-        
-        r  = P * d1 - Se * d2
-        return complex(r, r - P + Se)
 
-black_scholes_numba_opt_vec = nb.vectorize('c16(f8,f8,f8,f8,f8)', target="parallel")(black_scholes_numba_opt)
+        res = P * d1 - Se * d2
+        call [0] = res
+        put [0] = res - P + Se
+
+black_scholes_numba_opt_vec = nb.guvectorize('(f8[::1],f8[::1],f8[::1],f8[:],f8[:],f8[:],f8[::1],f8[::1])',
+          '(),(),(),(),(),()->(),()', nopython=True, target="parallel", fastmath=True)(black_scholes_numba_opt)
 
 @nb.jit
-def black_scholes(nopt, price, strike, t, rate, vol):
+def black_scholes(nopt, price, strike, t, rate, vol, call, put):
 	sig_sig_two = vol*vol*2
 	mr = -rate
-	black_scholes_numba_opt_vec(price, strike, t, mr, sig_sig_two)
+	black_scholes_numba_opt_vec(price, strike, t, mr, sig_sig_two, vol, call, put)
 
-if __name__ == '__main__':
-        base_bs_erf.run("Numba@vec-par", black_scholes, pass_args=False)
+base_bs_erf.run("Numba@guvec-par", black_scholes, pass_args=True)

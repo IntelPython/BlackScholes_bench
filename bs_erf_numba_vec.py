@@ -51,7 +51,7 @@ def black_scholes_numba_opt(price, strike, t, mr, sig_sig_two):
         r  = P * d1 - Se * d2
         return complex(r, r - P + Se)
 
-black_scholes_numba_opt_vec = nb.vectorize('c16(f8,f8,f8,f8,f8)', target="parallel")(black_scholes_numba_opt)
+black_scholes_numba_opt_vec = nb.vectorize('c16(f8,f8,f8,f8,f8)', nopython=True)(black_scholes_numba_opt)
 
 @nb.jit
 def black_scholes(nopt, price, strike, t, rate, vol):
