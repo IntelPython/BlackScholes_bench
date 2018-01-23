@@ -53,7 +53,7 @@ def black_scholes_numba_opt(price, strike, t, mr, sig_sig_two, vol, call, put):
         put [0] = res - P + Se
 
 black_scholes_numba_opt_vec = nb.guvectorize('(f8[::1],f8[::1],f8[::1],f8[:],f8[:],f8[:],f8[::1],f8[::1])',
-          '(),(),(),(),(),()->(),()', nopython=True, target="parallel", fastmath=True)(black_scholes_numba_opt)
+          '(),(),(),(),(),()->(),()', nopython=True, target="parallel", fastmath=False)(black_scholes_numba_opt)
 
 @nb.jit
 def black_scholes(nopt, price, strike, t, rate, vol, call, put):

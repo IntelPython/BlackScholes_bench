@@ -123,7 +123,7 @@ def run(name, alg, sizes=15, step=2, nopt=1024, nparr=True, dask=False, pass_arg
 		import dask.multiprocessing
 		import dask.array as da
 		dask_modes = {
-		    "sq": dask.async.get_sync,
+		    "sq": dask.local.get_sync,
 		    "mt": dask.threaded.get,
 		    "mp": dask.multiprocessing.get
 		}
