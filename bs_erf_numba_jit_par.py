@@ -1,4 +1,4 @@
-# Copyright (c) 2017, Intel Corporation
+# Copyright (c) 2017-2018, Intel Corporation
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions are met:
@@ -28,12 +28,12 @@ import base_bs_erf
 import numba as nb
 from math import log, sqrt, exp, erf
 
-@nb.njit('(i8,i8,f8[::1],f8[::1],f8[::1],f8,f8,f8[::1],f8[::1])', error_model='numpy', fastmath=True)
-def black_scholes_core( r1, r2, price, strike, t, rate, vol, call, put):
+@nb.njit(error_model='numpy', fastmath=True, parallel=True)
+def black_scholes( nopt, price, strike, t, rate, vol, call, put):
     mr = -rate
     sig_sig_two = vol * vol * 2
 
-    for i in range(r1, r2):
+    for i in nb.prange(nopt):
         P = price[i]
         S = strike [i]
         T = t [i]
@@ -58,20 +58,5 @@ def black_scholes_core( r1, r2, price, strike, t, rate, vol, call, put):
         put [i] = r - P + Se
 
 
-@nb.njit(error_model='numpy', fastmath=True)
-def black_scholes( nopt, price, strike, t, rate, vol, call, put):
-    chunk = int(512)
-
-    for ch in range(nopt//chunk):
-        black_scholes_core( ch*chunk, (ch+1)*chunk, price, strike, t, rate, vol, call, put)
-
-@nb.njit(error_model='numpy', fastmath=True, parallel=True)
-def black_scholes2( nopt, price, strike, t, rate, vol, call, put):
-    chunk = int(512)
-
-    for ch in nb.prange(nopt//chunk):
-        black_scholes_core( ch*chunk, (ch+1)*chunk, price, strike, t, rate, vol, call, put)
-
 if __name__ == '__main__':
-   base_bs_erf.run("Numba@jit-loop", black_scholes, nparr=True, pass_args=True)
-   base_bs_erf.run("Numba@jit-loop", black_scholes2, nparr=True, pass_args=True)
+   base_bs_erf.run("Numba@jit-loop-par", black_scholes, nparr=True, pass_args=True)
