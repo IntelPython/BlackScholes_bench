@@ -4,12 +4,13 @@ Benchmark computing Black Scholes formula using different technologies
 ## Prerequisites
 - `icc`, if compiling native benchmarks. Intel Distribution for Python*
   2019 Gold benchmarks used icc 17.0.1.
-- `mkl`, if compiling native benchmarks.
+- `mkl`, if compiling native benchmarks with MKL.
 
 ## Setup
 - Use `set_python_envs.sh` to install Python environment from Intel channel
 - To compile native benchmarks, run `make bin`, or simply `make` to compile
   and run.
+  - To disable MKL version, set `MKL=0`, i.e. run `make MKL=0`.
 
 ## Usage
 

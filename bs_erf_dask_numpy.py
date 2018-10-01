@@ -1,4 +1,4 @@
-# Copyright (C) 2017 Intel Corporation
+# Copyright (C) 2017-2018 Intel Corporation
 #
 # SPDX-License-Identifier: MIT
 
@@ -34,7 +34,7 @@ def black_scholes ( nopt, price, strike, t, rate, vol ):
 
 	call = P * d1 - Se * d2
 	put = call - P + Se
-	
+
 	return np.stack((call, put))
 
 def black_scholes_dask ( nopt, price, strike, t, rate, vol, schd=None ):

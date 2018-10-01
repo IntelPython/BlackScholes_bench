@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014-2015 Intel Corporation
+ * Copyright (C) 2014-2015, 2018 Intel Corporation
  *
  * SPDX-License-Identifier: MIT
  */
@@ -47,6 +47,7 @@ int main(int argc, char * argv[])
         printf("%.6lf\n", (2.0 * nopt * 100 / 1e6)/((double) (t2 - t1) / getHz()));
 
         /* Compute call and put prices using MKL VML functions */
+#ifdef MKL
         printf("ERF: Native-C-VML: Size: %d MOPS: ", nopt);
         t1 = timer_rdtsc();
         for(j = 0; j < 100; j++) {
@@ -54,6 +55,7 @@ int main(int argc, char * argv[])
         }
         t2 = timer_rdtsc();
         printf("%.6lf\n", (2.0 * nopt * 100 / 1e6)/((double) (t2 - t1) / getHz()));
+#endif
         fflush(stdout);
 
         /* Deallocate arrays */

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014-2015 Intel Corporation
+ * Copyright (C) 2014-2015, 2018 Intel Corporation
  *
  * SPDX-License-Identifier: MIT
  */

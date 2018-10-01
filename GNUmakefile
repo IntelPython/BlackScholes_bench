@@ -1,4 +1,4 @@
-# Copyright (C) 2014-2015 Intel Corporation
+# Copyright (C) 2014-2015, 2018 Intel Corporation
 #
 # SPDX-License-Identifier: MIT
 #
@@ -22,9 +22,14 @@
 
 SRC:=                      \
        black-scholes.c     \
-       black-scholes_mkl.c \
        data_gen.c          \
        main.c
+
+MKL ?= 1
+
+ifeq ($(MKL),1)
+	SRC += black-scholes_mkl.c
+endif
 
 # ==============================================================================
 # ############## Configure CFLAGS  #############################################
@@ -42,6 +47,11 @@ CFLAGS      += -$(QOPT)restrict
 CFLAGS      += -qopenmp
 CFLAGS      += -I./
 CFLAGS		+= -fp-model precise
+
+ifeq ($(MKL),1)
+	CFLAGS += -mkl
+	CFLAGS += -DMKL
+endif
 
 PREC ?= d
 ifeq ($(PREC),d)
@@ -92,7 +102,7 @@ bin: $(TARGET)
 
 
 $(TARGET): $(SRC)
-	$(CC) $(CFLAGS) $(SRC) -mkl -o $(TARGET)
+	$(CC) $(CPPFLAGS) $(CFLAGS) $(SRC) -o $(TARGET)
 
 clean:
 	rm -rf *.o *.out *.optrpt $(TARGET)
