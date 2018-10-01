@@ -8,14 +8,17 @@ Benchmark computing Black Scholes formula using different technologies
 
 ## Setup
 - Use `set_python_envs.sh` to install Python environment from Intel channel
-- To compile native benchmarks, run `make bin`, or simply `make` to compile
-  and run.
-  - To disable MKL version, set `MKL=0`, i.e. run `make MKL=0`.
+- Run `make` to build and run benchmarks
+  - Run `make mkl` to build and run MKL version
+  - Run `make nomkl` to build and run non-MKL version
+  - Run `make black_scholes_mkl` to only build MKL version
+  - Run `make black_scholes` to only build non-MKL version
 
 ## Usage
 
 ### Native benchmarks
-Run the compiled binary `./black_scholes`.
+- Non-MKL version: Run the compiled binary `./black_scholes`.
+- MKL version: Run the compiled binary `./black_scholes_mkl`.
 
 ### Python benchmarks
 ```

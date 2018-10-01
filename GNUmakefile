@@ -21,15 +21,9 @@
 # ==============================================================================
 
 SRC:=                      \
-       black-scholes.c     \
        data_gen.c          \
        main.c
 
-MKL ?= 1
-
-ifeq ($(MKL),1)
-	SRC += black-scholes_mkl.c
-endif
 
 # ==============================================================================
 # ############## Configure CFLAGS  #############################################
@@ -47,11 +41,6 @@ CFLAGS      += -$(QOPT)restrict
 CFLAGS      += -qopenmp
 CFLAGS      += -I./
 CFLAGS		+= -fp-model precise
-
-ifeq ($(MKL),1)
-	CFLAGS += -mkl
-	CFLAGS += -DMKL
-endif
 
 PREC ?= d
 ifeq ($(PREC),d)
@@ -95,16 +84,21 @@ endif
 # ############## Define make rules #############################################
 # ==============================================================================
 
-all: bin
+all: nomkl mkl
+
+mkl: $(TARGET)_mkl
+	./$(TARGET)_mkl
+
+nomkl: $(TARGET)
 	./$(TARGET)
 
-bin: $(TARGET)
+$(TARGET): $(SRC) black-scholes.c
+	$(CC) $(CPPFLAGS) $(CFLAGS) $^ -o $(TARGET)
 
-
-$(TARGET): $(SRC)
-	$(CC) $(CPPFLAGS) $(CFLAGS) $(SRC) -o $(TARGET)
+$(TARGET)_mkl: $(SRC) black-scholes_mkl.c
+	$(CC) $(CPPFLAGS) $(CFLAGS) -mkl -DBLACK_SCHOLES_MKL $^ -o $(TARGET)_mkl
 
 clean:
-	rm -rf *.o *.out *.optrpt $(TARGET)
+	rm -rf *.o *.out *.optrpt $(TARGET) $(TARGET)_mkl
 
-.PHONY: all clean bin
+.PHONY: all clean mkl nomkl

@@ -34,28 +34,30 @@ int main(int argc, char * argv[])
 
         /* Warm up cycle */
         for(j = 0; j < 10; j++) {
+#ifdef BLACK_SCHOLES_MKL
+            BlackScholesFormula_MKL( nopt, RISK_FREE, VOLATILITY, s0, x, t, vcall_mkl, vput_mkl );
+#else
             BlackScholesFormula_Compiler( nopt, RISK_FREE, VOLATILITY, s0, x, t, vcall_compiler, vput_compiler );
+#endif
         }
 
+#ifdef BLACK_SCHOLES_MKL
+        /* Compute call and put prices using MKL VML functions */
+        printf("ERF: Native-C-VML: Size: %d MOPS: ", nopt);
+#else
         /* Compute call and put prices using compiler math libraries */
         printf("ERF: Native-C-SVML: Size: %d MOPS: ", nopt);
-        t1 = timer_rdtsc();
-        for(j = 0; j < 100; j++) {
-            BlackScholesFormula_Compiler( nopt, RISK_FREE, VOLATILITY, s0, x, t, vcall_compiler, vput_compiler );
-        }
-        t2 = timer_rdtsc();
-        printf("%.6lf\n", (2.0 * nopt * 100 / 1e6)/((double) (t2 - t1) / getHz()));
-
-        /* Compute call and put prices using MKL VML functions */
-#ifdef MKL
-        printf("ERF: Native-C-VML: Size: %d MOPS: ", nopt);
-        t1 = timer_rdtsc();
-        for(j = 0; j < 100; j++) {
-             BlackScholesFormula_MKL( nopt, RISK_FREE, VOLATILITY, s0, x, t, vcall_mkl, vput_mkl );
-        }
-        t2 = timer_rdtsc();
-        printf("%.6lf\n", (2.0 * nopt * 100 / 1e6)/((double) (t2 - t1) / getHz()));
 #endif
+        t1 = timer_rdtsc();
+        for(j = 0; j < 100; j++) {
+#ifdef BLACK_SCHOLES_MKL
+            BlackScholesFormula_MKL( nopt, RISK_FREE, VOLATILITY, s0, x, t, vcall_mkl, vput_mkl );
+#else
+            BlackScholesFormula_Compiler( nopt, RISK_FREE, VOLATILITY, s0, x, t, vcall_compiler, vput_compiler );
+#endif
+        }
+        t2 = timer_rdtsc();
+        printf("%.6lf\n", (2.0 * nopt * 100 / 1e6)/((double) (t2 - t1) / getHz()));
         fflush(stdout);
 
         /* Deallocate arrays */
