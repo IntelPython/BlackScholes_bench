@@ -40,7 +40,6 @@ CFLAGS      += -qopt-report-phase$(EQCOLON)vec
 CFLAGS      += -$(QOPT)restrict
 CFLAGS      += -qopenmp
 CFLAGS      += -I./
-CFLAGS		+= -fp-model precise
 
 PREC ?= d
 ifeq ($(PREC),d)
@@ -69,9 +68,10 @@ ifeq ($(TARGET_ARCH),auto)
     CFLAGS += -xCORE-AVX2 -axCOMMON-AVX512
 endif
 
-ACC ?= ha
+ACC ?= ep
 ifeq ($(ACC),ha)
     CFLAGS += -$(FQOPT)imf-precision$(EQCOLON)high -D_VML_ACCURACY_HA_
+    CFLAGS += -fp-model precise
 endif
 ifeq ($(ACC),la)
     CFLAGS += -$(FQOPT)imf-precision$(EQCOLON)medium -D_VML_ACCURACY_LA_
