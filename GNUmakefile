@@ -68,7 +68,7 @@ ifeq ($(TARGET_ARCH),auto)
     CFLAGS += -xCORE-AVX2 -axCOMMON-AVX512
 endif
 
-ACC ?= ep
+ACC ?= la
 ifeq ($(ACC),ha)
     CFLAGS += -$(FQOPT)imf-precision$(EQCOLON)high -D_VML_ACCURACY_HA_
     CFLAGS += -fp-model precise
@@ -80,17 +80,23 @@ ifeq ($(ACC),ep)
     CFLAGS += -$(FQOPT)imf-precision$(EQCOLON)low -$(FQOPT)imf-domain-exclusion$(EQCOLON)31 -D_VML_ACCURACY_EP_
 endif
 
+TARGET := $(TARGET)_$(ACC)
+
 # ==============================================================================
 # ############## Define make rules #############################################
 # ==============================================================================
 
 all: nomkl mkl
 
-mkl: $(TARGET)_mkl
+mkl: black_scholes_mkl
 	./$(TARGET)_mkl
 
-nomkl: $(TARGET)
+nomkl: black_scholes
 	./$(TARGET)
+
+black_scholes: $(TARGET)
+
+black_scholes_mkl: $(TARGET)_mkl
 
 $(TARGET): $(SRC) black-scholes.c
 	$(CC) $(CPPFLAGS) $(CFLAGS) $^ -o $(TARGET)
@@ -99,6 +105,6 @@ $(TARGET)_mkl: $(SRC) black-scholes_mkl.c
 	$(CC) $(CPPFLAGS) $(CFLAGS) -mkl -DBLACK_SCHOLES_MKL $^ -o $(TARGET)_mkl
 
 clean:
-	rm -rf *.o *.out *.optrpt $(TARGET) $(TARGET)_mkl
+	rm -rf *.o *.out *.optrpt $(foreach acc,ha la ep,black_scholes_$(acc) black_scholes_$(acc)_mkl)
 
 .PHONY: all clean mkl nomkl
