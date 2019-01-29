@@ -13,9 +13,10 @@ cd $DIR
      bash ./Miniconda3-latest-Linux-x86_64.sh -b -p $DIR -f 
      [ -x $CONDA ] || exit 1
 )
+[ -d $DIR/envs/default3 ] || $CONDA create -y -n default3 python=3 numpy numexpr scipy tbb dask numba cython
 [ -d $DIR/envs/intel3 ] || $CONDA create -y -n intel3 -c intel python=3 numpy numexpr scipy tbb dask numba cython
 [ -d $DIR/envs/pip3 ] || (
      $CONDA create -y -n pip3 -c intel python=3 pip llvmlite cython
-     $DIR/envs/pip3/bin/pip install numpy scipy scikit-learn toolz numexpr
+     $DIR/envs/pip3/bin/pip install numpy scipy scikit-learn toolz cloudpickle numexpr
      $DIR/envs/pip3/bin/pip install dask numba
 )

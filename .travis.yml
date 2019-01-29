@@ -2,5 +2,5 @@ language: minimal
 install:
     - ./set_python_envs.sh
 script:
-    - env PYTHON=$HOME/miniconda3/envs/intel3/bin/python ./run.sh --repeat 1 --size 16 # correctness test only, not good for real performance testing
-    - env PYTHON=$HOME/miniconda3/envs/pip3/bin/python ./run.sh --repeat 1 --size 16 # correctness test only, not good for real performance testing
+    - env PYTHON=$HOME/miniconda3/envs/default3/bin/python ./run.sh --repeat 1 --size 512 --steps 2 # correctness test only, not good for real performance testing
+    - env PYTHON=$HOME/miniconda3/envs/pip3/bin/python ./run.sh --repeat 1 --size 512 --steps 2
