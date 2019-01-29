@@ -1,8 +1,13 @@
+version: 1.0.{build}-{branch}
+pull_requests:
+  do_not_increment_build_number: true
+skip_tags: true
 image: Visual Studio 2017
-#skip_branch_with_pr: true
+shallow_clone: true
 install:
-    - sh: set_python_envs.sh
+- sh: set_python_envs.sh
 build: off
 test_script:
-    - sh: env PYTHON=$HOME/miniconda3/envs/intel3/bin/python ./run.sh --repeat 1 --size 16
+- sh: env PYTHON=$HOME/miniconda3/envs/default3/bin/python ./run.sh --repeat 1 --size 16
+- sh: env PYTHON=$HOME/miniconda3/envs/pip3/bin/python ./run.sh --repeat 1 --size 16
 deploy: off
