@@ -1,0 +1,8 @@
+image: Visual Studio 2017
+environment:
+    BASH: C:\msys64\bin\bash.exe
+install:
+    - %BASH% set_python_envs.sh
+build_script:
+test_script:
+    - %BASH% -c PYTHON=$HOME/miniconda3/envs/intel3/bin/python ./run.sh --repeat 1 --size 16
