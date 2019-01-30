@@ -11,6 +11,8 @@ pkgs=${PACKAGES:-numpy numexpr scipy tbb dask numba cython toolz cloudpickle}
 
 # Sanity check
 [ -x "$CONDA_EXE" -a -d "$CONDA_PREFIX" ] || exit 1         # active conda environment is required
+. ${CONDA_PROFILE:-$CONDA_PREFIX/etc/profile.d/conda.sh}  # initialize this bash process
+conda activate base
 
 conda_install () {
     n=$1; shift
@@ -24,9 +26,9 @@ for v in $pyvers; do
     for c in $channels; do
         if [ x$c == xpip ]; then
             conda_install pip$v python=$v pip
-            . activate pip$v
+            conda activate pip$v
             pip install -U --isolated $pkgs
-            . activate base
+            conda activate base
         else
             conda_install $c$v -c $c python=$v $pkgs
         fi
