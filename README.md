@@ -1,3 +1,6 @@
+[![Build status](https://ci.appveyor.com/api/projects/status/eqwaj633uivd3nnv/branch/master?svg=true)](https://ci.appveyor.com/project/anton-malakhov/blackscholes-bench/branch/master)
+[![Build Status](https://travis-ci.org/IntelPython/BlackScholes_bench.svg?branch=master)](https://travis-ci.org/IntelPython/BlackScholes_bench)
+
 # BlackScholes benchmark
 Benchmark computing Black Scholes formula using different technologies
 

@@ -4,8 +4,9 @@
 # SPDX-License-Identifier: MIT
 
 envs=here  # run in current environment by default
-if [ -x "$CONDA_PYTHON_EXE" -a -d "$CONDA_PREFIX" ]; then     # active conda environment
+if [ -f "$CONDA_PROFILE" -o -d "$CONDA_PREFIX" ]; then        # need conda environment
     . ${CONDA_PROFILE:-$CONDA_PREFIX/etc/profile.d/conda.sh}  # initialize this bash process
+    [ -x "$CONDA_PYTHON_EXE" ] || conda activate base         # activate
     # run all available environments if in base environment, otherwise run here
     [ x${CONDA_DEFAULT_ENV/base/} == x ] && envs=`ls $CONDA_PREFIX/envs`
 fi
