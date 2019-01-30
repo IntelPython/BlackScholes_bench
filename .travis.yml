@@ -7,4 +7,4 @@ script:
 cache:
   timeout: 600
   directories:
-    - $HOME/miniconda3
+  # it makes no sense since - $HOME/miniconda3

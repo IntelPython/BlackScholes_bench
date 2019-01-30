@@ -1,0 +1,17 @@
+version: '{branch}-{build}'
+image: Visual Studio 2017
+pull_requests:
+  do_not_increment_build_number: true
+skip_tags: true
+shallow_clone: true
+environment:
+  PYVERS: 3
+  HOME: C:\projects\blackscholes-bench
+  PATH: C:\msys64\usr\bin
+  CONDA_PROFILE: /c/Miniconda3-x64/etc/profile.d/conda.sh
+install:
+- cmd: bash -x install-conda-envs.sh
+build_script:
+- cmd: bash -x run.sh --size 512 --steps 2
+test: off
+deploy: off
