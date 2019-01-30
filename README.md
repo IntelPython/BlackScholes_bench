@@ -1,3 +1,6 @@
+[![Build status](https://ci.appveyor.com/api/projects/status/eqwaj633uivd3nnv/branch/master?svg=true)](https://ci.appveyor.com/project/anton-malakhov/blackscholes-bench/branch/master)
+[![Build Status](https://travis-ci.org/IntelPython/BlackScholes_bench.svg?branch=master)](https://travis-ci.org/IntelPython/BlackScholes_bench)
+
 # BlackScholes benchmark
 Benchmark computing Black Scholes formula using different technologies
 
@@ -7,12 +10,20 @@ Benchmark computing Black Scholes formula using different technologies
 - `mkl`, if compiling native benchmarks with MKL.
 
 ## Setup
-- Use `set_python_envs.sh` to install Python environment from Intel channel
-- Run `make` to build and run benchmarks
+
+### Linux & Mac
+- Run `. activate-conda.sh` to install miniconda on Linux and Mac
+- Run `make` to build and run native benchmarks
   - Run `make mkl` to build and run MKL version
   - Run `make nomkl` to build and run non-MKL version
   - Run `make black_scholes_mkl` to only build MKL version
   - Run `make black_scholes` to only build non-MKL version
+
+### Windows
+- Download & install Miniconda3 and MSYS2
+- Run bash from MSYS2 and activate miniconda environment
+- Run `./install-conda-envs.sh` to install Python environments
+
 
 ## Usage
 

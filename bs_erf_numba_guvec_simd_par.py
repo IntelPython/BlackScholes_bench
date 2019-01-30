@@ -46,3 +46,4 @@ def black_scholes(nopt, price, strike, t, rate, vol, call, put):
                                 mr, sig_sig_two, call.reshape((-1,512)), put.reshape((-1,512)).reshape((-1,512)))
 
 base_bs_erf.run("Numba@guvec-par-simd", black_scholes, pass_args=True)
+print("Threading layer:", nb.threading_layer())

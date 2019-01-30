@@ -102,9 +102,9 @@ def run(name, alg, sizes=15, step=2, nopt=1024, nparr=True, dask=False, pass_arg
 		import dask.multiprocessing
 		import dask.array as da
 		dask_modes = {
-		    "sq": dask.local.get_sync,
-		    "mt": dask.threaded.get,
-		    "mp": dask.multiprocessing.get
+		    "sq": 'single-threaded',
+		    "mt": 'threads',
+		    "mp": 'processes'
 		}
 		kwargs = {"schd": dask_modes[args.dask]}
 		name += "-"+args.dask
@@ -127,7 +127,7 @@ def run(name, alg, sizes=15, step=2, nopt=1024, nparr=True, dask=False, pass_arg
 			call = np.zeros(nopt, dtype=np.float64)
 			put  = -np.ones(nopt, dtype=np.float64)
 		iterations = xrange(repeat)
-		print("ERF: {}: Size: {}".format(name, nopt), end=' ')
+		print("ERF: {}: Size: {}".format(name, nopt), end=' ', flush=True)
 		sys.stdout.flush()
 
 		if pass_args:

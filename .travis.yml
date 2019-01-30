@@ -1,0 +1,10 @@
+language: minimal
+install:
+    - source ./activate-conda.sh
+    - ./install-conda-envs.sh
+script:
+    - ./run.sh --size 512 --steps 2 # correctness test only, not good for real performance testing
+cache:
+  timeout: 600
+  directories:
+  # it makes no sense since - $HOME/miniconda3
