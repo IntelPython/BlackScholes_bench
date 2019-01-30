@@ -37,8 +37,8 @@ def black_scholes ( nopt, price, strike, t, rate, vol ):
 
 ne.set_num_threads(ne.detect_number_of_cores())
 ne.set_vml_accuracy_mode('high')
-if numpy_ver.startswith("Intel"):
+if "invsqrt" in numpy_ver: # XXX: find a better way
     base_bs_erf.run("Numexpr", black_scholes)
 else:
-    print("Skipping", numpy_ver, "environment")
+    print("Skipping current environment")
 
