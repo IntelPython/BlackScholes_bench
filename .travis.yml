@@ -4,3 +4,6 @@ install:
     - ./install-conda-envs.sh
 script:
     - ./run.sh --size 512 --steps 2 # correctness test only, not good for real performance testing
+cache:
+  directories:
+    - $HOME/miniconda3

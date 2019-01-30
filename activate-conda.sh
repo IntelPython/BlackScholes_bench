@@ -17,8 +17,8 @@ CONDA_PROFILE=$DIR/etc/profile.d/conda.sh
     unset INST; cd -
     [ -x $CONDA ] || exit 1
 }
-[ $DIR/bin/conda == `which conda` ] || { # initialize
+[ x$DIR/bin/conda == x`which conda` ] || { # initialize
     . $CONDA_PROFILE
 }
 conda activate base
-[ $DIR/bin/python == `which python` ] || exit 1 # check
+[ x$DIR/bin/python == x`which python` ] || exit 1 # check
