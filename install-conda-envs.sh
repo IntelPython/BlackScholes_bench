@@ -7,7 +7,7 @@
 pyvers=${PYVERS:-3}                                         # Python versions to install, 3 is default
 channels=${CHANNELS:-intel defaults pip}                    # channels to intall from
 # list of packages to install
-pkgs=${PACKAGES:-numpy numexpr scipy tbb dask numba cython toolz cloudpickle}
+pkgs=${PACKAGES:-numpy numexpr scipy dask numba cython toolz cloudpickle}
 
 # Sanity check
 [ -x "$CONDA_EXE" -a -d "$CONDA_PREFIX" ] || exit 1         # active conda environment is required
