@@ -5,5 +5,6 @@ install:
 script:
     - ./run.sh --size 512 --steps 2 # correctness test only, not good for real performance testing
 cache:
+  timeout: 600
   directories:
     - $HOME/miniconda3
