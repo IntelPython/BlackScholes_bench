@@ -32,7 +32,7 @@ CC          := icc
 QOPT        :=
 FQOPT       :=f
 EQCOLON     :="="
-TARGET		:= black_scholes
+TARGET      := black_scholes
 
 CFLAGS      += -g -O3
 CFLAGS      += -qopt-report
@@ -88,11 +88,12 @@ TARGET := $(TARGET)_$(ACC)
 
 all: nomkl mkl
 
+# build and run (test size only)
 mkl: black_scholes_mkl
-	./$(TARGET)_mkl
+	./$(TARGET)_mkl 1
 
 nomkl: black_scholes
-	./$(TARGET)
+	./$(TARGET) 1
 
 black_scholes: $(TARGET)
 

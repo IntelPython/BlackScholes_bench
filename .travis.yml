@@ -1,13 +1,18 @@
-language: minimal
+language: c
 branches:
   only:
   - master
 install:
-    - source ./activate-conda.sh
-    - ./install-conda-envs.sh
+  - source ./activate-conda.sh
+  - ./install-conda-envs.sh
+  - ./install-icc-online.sh
 script:
-    - ./run.sh --size 512 --steps 2 # correctness test only, not good for real performance testing
+  - ./run.sh --size 512 --steps 2 # correctness test only, not good for real performance testing
+  - make nomkl
 cache:
   timeout: 600
   directories:
-  # it makes no sense since - $HOME/miniconda3
+  # it makes no sense - $HOME/miniconda3
+env:
+  global:
+    - secure: "mRGqxS9lEqMUN1z+1xA0UpmHJHtCToipV28UH0bfOnu35KPsFUw93gmJ6mLMwDjogCfJVcmoOzlMAdwnYmb264jmWqCoJFCOzDjFRnVDNcI46dh7/ZPUF36247tJs6+KpZt82FaG9tzT2+YvMGJShFdfI4U70Cvdkwify+r0Zd3Do6LE798Prs381yLpJnc62pDckOXOVqueLtmXHBkxbNGa3hBXT7OVVl3T/I78i8X4MlfNIw3YDxljg5M8fCfxjCu5ABco0LaoxzNKhj4k7uqfM2KcH6avEmkF+E/edMCEcrpwWgqJlBwo0fTNrPt2Gu0xI0vZ2Xqwef0RQ9sZkMuOMvZc+iDc3sTFbGKj3e4r4NbmGTNEK9NoG/3P1ZrVjviP1q+I7eSDnK9UQITCmy39+pezR5Yohhp0a+jE1kApOZcRXYz9Ygnh9D/6aR7sKVgcsqGj7z9G/XHtmr881UwcuA2LqgJWsMq/h9Sj6LWfjRrtbpE+3GCO09/G4s5M+Kdv72QL+0U/kbYLQKTrewURyM+I5Aco4ng6sFZDVxQ5Ypp9hfZLC08p+UHLfVxkd4UiMGkpPprayRfJDWjs3Kyr3JB6HYqEdksM8d6CPbpvEUud5Dgw5kDxFQWTA/jsC54eulB/no79MiCBMrfzXh2Bsu7mu0dV1+5nSYHKULI="
