@@ -4,17 +4,14 @@ branches:
   only:
   - master
 install:
+  - source ./activate-conda.sh
+  - ./install-conda-envs.sh
   - source ./activate-icc-online.sh
-#  - source ./activate-conda.sh
-#  - ./install-conda-envs.sh
 script:
-  - ls -R /opt/intel
-  - cat ~/.bashrc
-  - env | grep PATH
-  - make nomkl
-#  - ./run.sh --size 512 --steps 2 # correctness test only, not good for real performance testing
+  - make nomkl TARGET_ARCH=host
+  - ./run.sh --size 512 --steps 2 # correctness test only, not good for real performance testing
 after_script:
-  - /opt/intel/parallel_studio_xe_2019/uninstall.sh -s
+  - /opt/intel/parallel_studio_xe_2019/uninstall.sh -s # release the license.. just in case
 cache:
   timeout: 600
   directories:
