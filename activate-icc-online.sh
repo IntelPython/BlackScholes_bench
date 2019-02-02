@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 
 # Install Intel Parallel Studio on Travis CI
 # https://github.com/nemequ/icc-travis
@@ -12,6 +12,7 @@
 # See <https://creativecommons.org/publicdomain/zero/1.0/> for
 # details.
 
+( # keep variables local to this file
 # Product ID, see download URL for the parts below
 PRODUCT_ID=14865
 PRODUCT_NAME="parallel_studio_xe_2019_update1_composer_edition_for_cpp_online"
@@ -228,10 +229,10 @@ fi
 # Add configuration information to ~/.bashrc.  Unfortunately this will
 # not be picked up automatically by Travis, so you'll still need to
 # source ~/.bashrc in your .travis.yml
-echo "export INTEL_INSTALL_PATH=\"${DESTINATION}\"" >> ~/.bashrc-intel
+echo "export INTEL_INSTALL_PATH=\"${DESTINATION}\"" > ~/.bashrc-intel
 echo ". \"\${INTEL_INSTALL_PATH}/bin/compilervars.sh\" intel64" >> ~/.bashrc-intel
 echo "export LD_LIBRARY_PATH=\"\${INTEL_INSTALL_PATH}/lib/intel64:\$LD_LIBRARY_PATH\"" >> ~/.bashrc-intel
 echo "export PATH=\"\${INTEL_INSTALL_PATH}/bin:\$PATH\"" >> ~/.bashrc-intel
-cat ~/.bashrc >> ~/.bashrc-intel
-mv ~/.bashrc ~/.bashrc-backup
-mv ~/.bashrc-intel ~/.bashrc
+echo ". ~/.bashrc-intel" >> ~/.bashrc
+) # end of local scope
+. ~/.bashrc-intel

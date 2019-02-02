@@ -3,9 +3,8 @@ dist: xenial
 branches:
   only:
   - master
-before_install:
-  - ./install-icc-online.sh
 install:
+  - source ./activate-icc-online.sh
 #  - source ./activate-conda.sh
 #  - ./install-conda-envs.sh
 script:
@@ -14,6 +13,8 @@ script:
   - env | grep PATH
   - make nomkl
 #  - ./run.sh --size 512 --steps 2 # correctness test only, not good for real performance testing
+after_script:
+  - /opt/intel/parallel_studio_xe_2019/uninstall.sh -s
 cache:
   timeout: 600
   directories:
