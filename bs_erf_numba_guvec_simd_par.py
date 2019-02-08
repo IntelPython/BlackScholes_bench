@@ -7,7 +7,7 @@ import base_bs_erf
 import numba as nb
 from math import log, sqrt, exp, erf
 
-@nb.njit('(f8[::1],f8[::1],f8[::1],f8,f8,f8[::1],f8[::1])', error_model='numpy', fastmath=True)
+@nb.njit('(f8[::1],f8[::1],f8[::1],f8,f8,f8[::1],f8[::1])', error_model='numpy', fastmath=False)
 def black_scholes_jit( price, strike, t, mr, sig_sig_two, call, put):
     for i in range(price.size):
         P = price[i]
