@@ -8,7 +8,7 @@ import numpy as np
 from numpy import log, exp
 from base_bs_erf import erf, invsqrt
 
-def black_scholes ( nopt, price, strike, t, rate, vol ):
+def black_scholes ( nopt, price, strike, t, rate, vol, call, put ):
 	mr = -rate
 	sig_sig_two = vol * vol * 2
 
@@ -31,9 +31,8 @@ def black_scholes ( nopt, price, strike, t, rate, vol ):
 
 	Se = exp(b) * S
 
-	call = P * d1 - Se * d2
-	put = call - P + Se
+	call[:] = P * d1 - Se * d2
+	put[:] = call - P + Se
 
-	return (call, put)
 
-base_bs_erf.run("Numpy", black_scholes)
+base_bs_erf.run("Numpy", black_scholes, nparr=True, pass_args=True)
