@@ -19,7 +19,8 @@ def build_ext():
   else:
     os.environ['CC'] = "icc"
     os.environ['LDSHARED'] = "icc -shared"
-    os.environ['CFLAGS'] = "-fimf-precision=high -qopt-report=5 -fno-alias -xhost -qopenmp -pthread -fno-strict-aliasing"
+    # use high accuracy precision
+    os.environ['CFLAGS'] = "-fimf-precision=high -prec-sqrt -qopt-report=5 -fno-alias -xhost -qopenmp -pthread -fno-strict-aliasing"
 
     setup(
         name = "bs_erf_cython_impl",

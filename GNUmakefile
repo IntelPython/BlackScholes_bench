@@ -71,7 +71,7 @@ endif
 ACC ?= la
 ifeq ($(ACC),ha)
     CFLAGS += -$(FQOPT)imf-precision$(EQCOLON)high -D_VML_ACCURACY_HA_
-    CFLAGS += -fp-model precise
+    CFLAGS += -prec-sqrt
 endif
 ifeq ($(ACC),la)
     CFLAGS += -$(FQOPT)imf-precision$(EQCOLON)medium -D_VML_ACCURACY_LA_

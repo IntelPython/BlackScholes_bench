@@ -61,8 +61,7 @@ void InitData( int nopt, tfloat* *s0, tfloat* *x, tfloat* *t,
     {
         struct drand48_data seed;
         srand48_r(omp_get_thread_num()+SEED, &seed);
-        #pragma omp for
-        #pragma simd
+        #pragma omp for simd
         for ( i = 0; i < nopt; i++ )
         {
             ts0[i] = RandRange( S0L, S0H, &seed );
