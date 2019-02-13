@@ -4,12 +4,11 @@ skip_tags: true
 skip_branch_with_pr: true
 shallow_clone: true
 environment:
-  PYVERS: 3
   HOME: C:\projects\blackscholes-bench
   PATH: C:\msys64\usr\bin
   CONDA_PROFILE: /c/Miniconda3-x64/etc/profile.d/conda.sh
 install:
-- cmd: bash -x install-conda-envs.sh
+- cmd: bash -x create-conda-envs.sh
 build: off
 test_script:
 - cmd: bash -x run.sh --size 512 --steps 2

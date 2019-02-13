@@ -1,0 +1,11 @@
+name: conda3
+channels:
+  - defaults
+dependencies:
+  - python=3
+  - numpy
+  - numexpr
+  - scipy
+  - dask
+  - numba
+  - cython

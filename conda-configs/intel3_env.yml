@@ -1,0 +1,12 @@
+name: intel3
+channels:
+  - intel
+  - defaults
+dependencies:
+  - python=3
+  - numpy
+  - numexpr
+  - scipy
+  - dask
+  - numba
+  - cython
