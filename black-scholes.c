@@ -58,9 +58,8 @@ void BlackScholesFormula_Compiler( int nopt,
     tfloat mr = -r;
     tfloat sig_sig_two = sig * sig * TWO;
 
-    #pragma omp parallel for shared(s0, x, t, vcall, vput)
+    #pragma omp parallel for simd shared(s0, x, t, vcall, vput)
     #pragma vector nontemporal (vcall, vput)
-    #pragma simd
     for ( i = 0; i < nopt; i++ )
     {
         a = LOG( s0[i] / x[i] );

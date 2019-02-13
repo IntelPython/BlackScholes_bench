@@ -99,7 +99,7 @@ void BlackScholesFormula_MKL( int nopt,
         VDIV(nbuf, s0 + i, x + i, a);
         VLOG(nbuf, a, a);
 
-        #pragma simd vectorlength(512)
+        #pragma vector vectorlength(512)
         for ( j = 0; j < nbuf; j++ )
         {
             b[j] = t[i + j] * mr;
@@ -111,7 +111,7 @@ void BlackScholesFormula_MKL( int nopt,
         VINVSQRT(nbuf, z, y);
         VEXP(nbuf, b, e);
 
-        #pragma simd vectorlength(512)
+        #pragma vector vectorlength(512)
         for ( j = 0; j < nbuf; j++ )
         {
             tfloat aj = a[j];
@@ -123,7 +123,7 @@ void BlackScholesFormula_MKL( int nopt,
         VERF(nbuf, w1, d1);
         VERF(nbuf, w2, d2);
 
-        #pragma simd vectorlength(512)
+        #pragma vector vectorlength(512)
         for ( j = 0; j < nbuf; j++ )
         {
             tfloat d1j = HALF + HALF*d1[j];
