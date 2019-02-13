@@ -10,7 +10,7 @@ def build_ext():
   try:
     from distutils.core import setup
     from Cython.Build import cythonize
-    import os, subprocess
+    import os, subprocess, numpy
 
     subprocess.call(['icc', '--version'])
   except:
@@ -24,6 +24,7 @@ def build_ext():
     setup(
         name = "bs_erf_cython_impl",
         ext_modules = cythonize("bs_erf_cython_impl.pyx"),
+        include_dirs = [numpy.get_include()],
         script_args = ["build_ext", "--inplace"]
     )
     import bs_erf_cython_impl as bsc
