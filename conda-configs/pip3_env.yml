@@ -1,0 +1,14 @@
+name: pip3
+channels:
+  - defaults
+dependencies:
+  - python=3
+  - pip:
+    - numpy
+    - numexpr
+    - scipy
+    - dask
+    - numba
+    - cython
+    - toolz
+    - cloudpickle

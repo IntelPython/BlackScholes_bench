@@ -17,7 +17,7 @@ set -o pipefail # pass exit status of the first command in a pipe
 ret=0
 
 for e in $envs; do  # for each conda environment
-    [ $e != here ] && conda activate $e   # if not here, activate
+    [ $e != here ] && { conda activate $e; conda list; }   # if not here, activate
     for i in ${RUNTESTS:-bs_erf_*.py}; do echo -e "\n$i:"; ${PYTHON:-python} $i --text "$CONDA_DEFAULT_ENV" $* | tee -a logs/$i.log || ret=1; done
 done
 exit $ret
