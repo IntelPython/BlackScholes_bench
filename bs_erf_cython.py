@@ -10,8 +10,13 @@ def build_ext():
   try:
     from distutils.core import setup
     from Cython.Build import cythonize
-    import os
+    import os, subprocess
 
+    subprocess.call(['icc', '--version'])
+  except:
+    print("error building the extension module: Cython and Intel compiler are required")
+    return False
+  else:
     os.environ['CC'] = "icc"
     os.environ['LDSHARED'] = "icc -shared"
     os.environ['CFLAGS'] = "-fimf-precision=high -qopt-report=5 -fno-alias -xhost -qopenmp -pthread -fno-strict-aliasing"
@@ -23,9 +28,6 @@ def build_ext():
     )
     import bs_erf_cython_impl as bsc
     return bsc
-  except:
-    print("error building the extension module: Cython and Intel compiler are required")
-    return False
 
 
 try:
