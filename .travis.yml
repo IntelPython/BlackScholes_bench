@@ -9,7 +9,6 @@ install:
   - source ./activate-icc-online.sh
 script:
   - make nomkl TARGET_ARCH=host
-  - python setup_cython_impl.py build_ext --inplace
   - ./run.sh --size 512 --steps 2 # correctness test only, not good for real performance testing
 after_script:
   - /opt/intel/parallel_studio_xe_2019/uninstall.sh -s # release the license.. just in case
