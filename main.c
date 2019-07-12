@@ -9,6 +9,8 @@
 #include "euro_opt.h"
 #include "rdtsc.h"
 
+#define STEPS 18
+
 int main(int argc, char * argv[])
 {
     int nopt = 1 * 1024;
@@ -27,7 +29,7 @@ int main(int argc, char * argv[])
     }
 
     int i, j;
-    for(i = 0; i < 18; i++) {
+    for(i = 0; i < STEPS; i++) {
     
         /* Allocate arrays, generate input data */
         InitData( nopt, &s0, &x, &t, &vcall_compiler, &vput_compiler, &vcall_mkl, &vput_mkl );
