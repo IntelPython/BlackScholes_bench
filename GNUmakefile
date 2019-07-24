@@ -68,10 +68,9 @@ ifeq ($(TARGET_ARCH),auto)
     CFLAGS += -xCORE-AVX2 -axCOMMON-AVX512
 endif
 
-ACC ?= la
+ACC ?= ha
 ifeq ($(ACC),ha)
     CFLAGS += -$(FQOPT)imf-precision$(EQCOLON)high -D_VML_ACCURACY_HA_
-    CFLAGS += -prec-sqrt
 endif
 ifeq ($(ACC),la)
     CFLAGS += -$(FQOPT)imf-precision$(EQCOLON)medium -D_VML_ACCURACY_LA_
@@ -90,10 +89,10 @@ all: nomkl mkl
 
 # build and run (test size only)
 mkl: black_scholes_mkl
-	./$(TARGET)_mkl 1
+	./$(TARGET)_mkl 1024
 
 nomkl: black_scholes
-	./$(TARGET) 1
+	./$(TARGET) 1024
 
 black_scholes: $(TARGET)
 
