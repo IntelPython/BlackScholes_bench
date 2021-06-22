@@ -5,17 +5,16 @@
 
 import base_bs_erf
 import numpy as np
+import dask
 import dask.array as da
 from numpy import log, exp
-from base_bs_erf import erf, invsqrt
+from base_bs_erf import rnd, erf, invsqrt, S0L, S0H, XL, XH, TL, TH
 
-def black_scholes ( nopt, price, strike, t, rate, vol ):
+def black_scholes ( nopt, rate, vol ):
 	mr = -rate
 	sig_sig_two = vol * vol * 2
 
-	P = price
-	S = strike
-	T = t
+	P, S, T = rnd.uniform(S0L, S0H, nopt), rnd.uniform(XL, XH, nopt), rnd.uniform(TL, TH, nopt)
 
 	a = log(P / S)
 	b = T * mr
@@ -37,8 +36,11 @@ def black_scholes ( nopt, price, strike, t, rate, vol ):
 
 	return np.stack((call, put))
 
-def black_scholes_dask ( nopt, price, strike, t, rate, vol, schd=None ):
-	return da.map_blocks( black_scholes, nopt, price, strike, t, rate, vol, new_axis=0 ).compute(scheduler=schd)
+def black_scholes_dask ( nopt, rate, vol, schd=None ):
+	res = schd.map( lambda x: black_scholes(nopt//64, rate, vol), range(64) )
+	return schd.submit(sum, res).result()
+	#return schd.gather(res)
+
 
 if __name__ == '__main__':
-	base_bs_erf.run("Dask-agg", black_scholes_dask, dask=True)
+	base_bs_erf.run("Dask-map-agg", black_scholes_dask, dask=True, pass_args=None)

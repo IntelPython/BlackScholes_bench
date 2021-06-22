@@ -16,17 +16,17 @@ except:
     numpy_ver="regular"
 
 try:
-    from numpy import erf
+    from mkl_umath import erf
     numpy_ver += "-erf"
 except:
     from scipy.special import erf
 
 try:
-    from numpy import invsqrt
+    from mkl_umath import invsqrt
     numpy_ver += "-invsqrt"
 except:
     #from numba import jit
-    invsqrt = lambda x: 1.0/np.sqrt(x)
+    invsqrt = lambda x: np.true_divide(1.0, np.sqrt(x))
     #invsqrt = jit(['f8(f8)','f8[:](f8[:])'])(invsqrt)
 
 try:
@@ -38,8 +38,6 @@ except:
     now = default_timer
     get_mops = lambda t0, n: n / (1.e6 * (now() - t0))
 
-
-print("Using ", numpy_ver, " numpy ", np.__version__)
 
 ######################################################
 # GLOBAL DECLARATIONS THAT WILL BE USED IN ALL FILES #
@@ -67,50 +65,60 @@ VOLATILITY = 0.2
 # C025 = np.float32(.25)
 TEST_ARRAY_LENGTH = 1024
 
+
 ###############################################
-
-def gen_data(nopt):
-    return (
-        rnd.uniform(S0L, S0H, nopt),
-        rnd.uniform(XL, XH, nopt),
-        rnd.uniform(TL, TH, nopt),
-        )
-
-##############################################	
 
 def run(name, alg, sizes=15, step=2, nopt=1024, nparr=True, dask=False, pass_args=False):
 	import argparse
 	parser = argparse.ArgumentParser()
 	parser.add_argument('--steps', required=False, default=sizes,  help="Number of steps")
 	parser.add_argument('--step',  required=False, default=step,   help="Factor for each step")
-	parser.add_argument('--chunk', required=False, default=2000000,help="Chunk size for Dask")
+	parser.add_argument('--chunk', required=False, default=None,   help="Chunk size for Dask (mutually exclusive with --chunks)")
+	parser.add_argument('--chunks',required=False, default=None,   help="Number of chunks for Dask")
 	parser.add_argument('--size',  required=False, default=nopt,   help="Initial data size")
 	parser.add_argument('--repeat',required=False, default=100,    help="Iterations inside measured region")
-	parser.add_argument('--dask',  required=False, default="sq",   help="Dask scheduler: sq, mt, mp")
+	parser.add_argument('--dask',  required=False, default="sq",   help="Dask scheduler: sq, mt, mp or addr:port of the scheduler")
 	parser.add_argument('--text',  required=False, default="",     help="Print with each result")
 	
 	args = parser.parse_args()
 	sizes= int(args.steps)
 	step = int(args.step)
 	nopt = int(args.size)
-	chunk= int(args.chunk)
+	chunks=int(args.chunks) if args.chunks else None
+	chunk= int(args.chunk) if args.chunk else None
+	assert(not chunks or not chunk, "Only one option can be specified: --chunk or --chunks")
 	repeat=int(args.repeat)
 	kwargs={}
+	print("Using", numpy_ver, "numpy", np.__version__)
 
-	if(dask):
+	if dask:
 		import dask
 		import dask.multiprocessing
 		import dask.array as da
 		dask_modes = {
-		    "sq": 'single-threaded',
+		    "sq": 'synchronous',
 		    "mt": 'threads',
 		    "mp": 'processes'
 		}
-		kwargs = {"schd": dask_modes[args.dask]}
+		if args.dask in dask_modes:
+			kwargs = {"schd": dask_modes[args.dask]}
+		else:
+			import distributed
+			kwargs = {"schd": distributed.Client(args.dask)}
 		name += "-"+args.dask
 
 	for i in xrange(sizes):
-		price, strike, t = gen_data(nopt)
+		if pass_args is None:
+			pass
+		elif dask:
+			if chunks:
+				chunk = int(nopt // chunks)
+			price = da.random.uniform(S0L, S0H, nopt, chunks=(chunk,))
+			strike = da.random.uniform(XL, XH, nopt, chunks=(chunk,))
+			t = da.random.uniform(TL, TH, nopt, chunks=(chunk,))
+		else:
+			price, strike, t = rnd.uniform(S0L, S0H, nopt), rnd.uniform(XL, XH, nopt), rnd.uniform(TL, TH, nopt)
+
 		if not nparr:
 			call = [0.0 for i in range(nopt)]
 			put = [-1.0 for i in range(nopt)]
@@ -118,30 +126,31 @@ def run(name, alg, sizes=15, step=2, nopt=1024, nparr=True, dask=False, pass_arg
 			strike=list(strike)
 			t=list(t)
 			repeat=1 # !!!!! ignore repeat count
-		if dask:
-			assert(not pass_args)
-			price = da.from_array(price, chunks=(chunk,), name=False)
-			strike = da.from_array(strike, chunks=(chunk,), name=False)
-			t = da.from_array(t, chunks=(chunk,), name=False)
+
 		if pass_args:
 			call = np.zeros(nopt, dtype=np.float64)
 			put  = -np.ones(nopt, dtype=np.float64)
 		iterations = xrange(repeat)
-		print("ERF: {}: Size: {}".format(name, nopt), end=' ', flush=True)
-		sys.stdout.flush()
+		print("ERF: {}: Size: {}".format(name, nopt), end=' ')
+		# sys.stdout.flush()
 
-		if pass_args:
-			alg(nopt, price, strike, t, RISK_FREE, VOLATILITY, call, put) #warmup
+		if pass_args is None:
+			alg(nopt, RISK_FREE, VOLATILITY, **kwargs) #warmup
+			t0 = now()
+			for _ in iterations:
+				alg(nopt, RISK_FREE, VOLATILITY, **kwargs)
+		elif pass_args:
+			alg(nopt, price, strike, t, RISK_FREE, VOLATILITY, call, put, **kwargs) #warmup
 			t0 = now()
 			for _ in iterations:
 				alg(nopt, price, strike, t, RISK_FREE, VOLATILITY, call, put, **kwargs)
 		else:
-			alg(nopt, price, strike, t, RISK_FREE, VOLATILITY) #warmup
+			alg(nopt, price, strike, t, RISK_FREE, VOLATILITY, **kwargs) #warmup
 			t0 = now()
 			for _ in iterations:
 				alg(nopt, price, strike, t, RISK_FREE, VOLATILITY, **kwargs)
 		mops = get_mops(t0, nopt)
-		print("MOPS:", mops*2*repeat, args.text)
+		print("MOPS:", mops*2*repeat, args.text, flush=True)
 		nopt *= step
 		repeat -= step
 		if repeat < 1:

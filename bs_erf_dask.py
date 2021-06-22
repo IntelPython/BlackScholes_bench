@@ -12,9 +12,9 @@ def black_scholes ( nopt, price, strike, t, rate, vol, schd=None):
 	mr = -rate
 	sig_sig_two = vol * vol * 2
 
-	P = price
-	S = strike
-	T = t
+	P = price.persist()
+	S = strike.persist()
+	T = t.persist()
 
 	a = log(P / S)
 	b = T * mr
@@ -36,4 +36,5 @@ def black_scholes ( nopt, price, strike, t, rate, vol, schd=None):
 
 	return da.compute( da.stack((put, call)), scheduler=schd )
 
-base_bs_erf.run("Dask", black_scholes, dask=True)
+if __name__ == '__main__':
+	base_bs_erf.run("Dask", black_scholes, dask=True)

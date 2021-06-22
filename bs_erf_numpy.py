@@ -5,7 +5,7 @@
 
 import base_bs_erf
 import numpy as np
-from numpy import log, exp
+from numpy import log, exp, sqrt
 from base_bs_erf import erf, invsqrt
 
 def black_scholes ( nopt, price, strike, t, rate, vol, call, put ):
