@@ -68,16 +68,17 @@ TEST_ARRAY_LENGTH = 1024
 
 ###############################################
 
-def run(name, alg, sizes=15, step=2, nopt=1024, nparr=True, dask=False, pass_args=False):
+def run(name, alg, sizes=15, step=2, nopt=1024, nparr=True, dask=False, mpi=False, pass_args=False):
 	import argparse
 	parser = argparse.ArgumentParser()
 	parser.add_argument('--steps', required=False, default=sizes,  help="Number of steps")
 	parser.add_argument('--step',  required=False, default=step,   help="Factor for each step")
-	parser.add_argument('--chunk', required=False, default=None,   help="Chunk size for Dask (mutually exclusive with --chunks)")
-	parser.add_argument('--chunks',required=False, default=None,   help="Number of chunks for Dask")
+	parser.add_argument('--chunk', required=False, default=None,   help="Chunk size for distributed computation (mutually exclusive with --chunks)")
+	parser.add_argument('--chunks',required=False, default=None,   help="Number of chunks for distributed computation")
 	parser.add_argument('--size',  required=False, default=nopt,   help="Initial data size")
 	parser.add_argument('--repeat',required=False, default=100,    help="Iterations inside measured region")
 	parser.add_argument('--dask',  required=False, default="sq",   help="Dask scheduler: sq, mt, mp or addr:port of the scheduler")
+	parser.add_argument('--mpi',   required=False, default=mpi,    help="MPI scheduler")
 	parser.add_argument('--text',  required=False, default="",     help="Print with each result")
 	
 	args = parser.parse_args()
@@ -107,12 +108,23 @@ def run(name, alg, sizes=15, step=2, nopt=1024, nparr=True, dask=False, pass_arg
 			kwargs = {"schd": distributed.Client(args.dask)}
 		name += "-"+args.dask
 
+	if args.mpi:
+		from mpi4py import MPI
+		comm = MPI.COMM_WORLD
+		kwargs = {"comm": comm}
+		mpirank = comm.Get_rank()
+		assert mpirank < chunks
+		nopt = nopt // chunks
+
+
 	for i in xrange(sizes):
+
+		if chunks:
+			chunk = int(nopt // chunks)
+
 		if pass_args is None:
 			pass
 		elif dask:
-			if chunks:
-				chunk = int(nopt // chunks)
 			price = da.random.uniform(S0L, S0H, nopt, chunks=(chunk,))
 			strike = da.random.uniform(XL, XH, nopt, chunks=(chunk,))
 			t = da.random.uniform(TL, TH, nopt, chunks=(chunk,))
@@ -131,7 +143,11 @@ def run(name, alg, sizes=15, step=2, nopt=1024, nparr=True, dask=False, pass_arg
 			call = np.zeros(nopt, dtype=np.float64)
 			put  = -np.ones(nopt, dtype=np.float64)
 		iterations = xrange(repeat)
-		print("ERF: {}: Size: {}".format(name, nopt), end=' ')
+		if args.mpi:
+			if mpirank == 0:
+				print("ERF: {}: Size: {}".format(name, nopt*chunks), end=' ')
+		else:
+			print("ERF: {}: Size: {}".format(name, nopt), end=' ')
 		# sys.stdout.flush()
 
 		if pass_args is None:
@@ -149,8 +165,15 @@ def run(name, alg, sizes=15, step=2, nopt=1024, nparr=True, dask=False, pass_arg
 			t0 = now()
 			for _ in iterations:
 				alg(nopt, price, strike, t, RISK_FREE, VOLATILITY, **kwargs)
-		mops = get_mops(t0, nopt)
-		print("MOPS:", mops*2*repeat, args.text, flush=True)
+
+		if args.mpi:
+			if mpirank == 0:
+				mops = get_mops(t0, nopt*chunks)
+				print("MOPS:", mops*2*repeat, args.text, flush=True)
+		else:
+				mops = get_mops(t0, nopt)
+				print("MOPS:", mops*2*repeat, args.text, flush=True)
+
 		nopt *= step
 		repeat -= step
 		if repeat < 1:

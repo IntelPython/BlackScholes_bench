@@ -5,11 +5,13 @@
 
 import base_bs_erf
 import numpy as np
-import dask
-import dask.array as da
 from numpy import log, exp
 from base_bs_erf import rnd, erf, invsqrt, S0L, S0H, XL, XH, TL, TH
+import ray
 
+ray.init(address='auto', _redis_password='5241590000000000')
+
+@ray.remote
 def black_scholes ( nopt, rate, vol ):
 	mr = -rate
 	sig_sig_two = vol * vol * 2
@@ -36,12 +38,10 @@ def black_scholes ( nopt, rate, vol ):
 
 	return sum(np.stack((call, put)))
 
-def black_scholes_dask ( nopt, rate, vol, schd=None ):
-	res = schd.map( lambda x: black_scholes(nopt//64, rate, vol), range(64) )
-	[r.result() for r in res]
-	#return schd.submit(sum, res).result()
-	#return schd.gather(res)
 
+def black_scholes_ray(nopt, rate, vol):
+	futures = [black_scholes.remote(nopt//64, rate, vol) for _ in range(64)]
+	ray.get(futures)
 
 if __name__ == '__main__':
-	base_bs_erf.run("Dask-map-agg", black_scholes_dask, dask=True, pass_args=None)
+	base_bs_erf.run("Ray-numpy", black_scholes_ray, pass_args=None)
