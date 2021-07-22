@@ -113,8 +113,10 @@ def run(name, alg, sizes=15, step=2, nopt=1024, nparr=True, dask=False, mpi=Fals
 		comm = MPI.COMM_WORLD
 		kwargs = {"comm": comm}
 		mpirank = comm.Get_rank()
+		mpisize = comm.Get_size()
 		assert mpirank < chunks
-		nopt = nopt // chunks
+		assert chunks >= mpisize
+		nopt = nopt // mpisize
 
 
 	for i in xrange(sizes):
@@ -168,7 +170,7 @@ def run(name, alg, sizes=15, step=2, nopt=1024, nparr=True, dask=False, mpi=Fals
 
 		if args.mpi:
 			if mpirank == 0:
-				mops = get_mops(t0, nopt*chunks)
+				mops = get_mops(t0, nopt*mpisize)
 				print("MOPS:", mops*2*repeat, args.text, flush=True)
 		else:
 				mops = get_mops(t0, nopt)

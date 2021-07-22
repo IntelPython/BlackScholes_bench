@@ -8,7 +8,7 @@ set -x
 rm $HOME/global/dask.sch
 OMP_NUM_THREADS=80
 export OMP_NUM_THREADS
-APP="python bs_erf_dask_map_numpy.py --dask `hostname -i`:41041 --repeat 1 --steps 20 --size 1000"
+APP="python bs_erf_dask_map_numpy.py --dask `hostname -i`:41041 --repeat 1 --steps 20 --size 1024"
 
 redis_password="5241590000000000"  #$(uuidgen)
 export redis_password
@@ -35,7 +35,7 @@ for ((  i=1; i<=$worker_num; i++ )); do
   echo "STARTING WORKER $i at ${nodes_array[$i]}";
   srun --nodes=1 --ntasks=1 -w ${nodes_array[$i]} --exclusive /bin/bash -xc 'dask-worker --scheduler-file $HOME/global/dask.sch' &
   sleep 10
-  time $APP --chunks 64; echo "return code: $? workers: $i"
+  time $APP --chunks $(($i + 1)); echo "return code: $? workers: $i"
 done
 
 echo Done

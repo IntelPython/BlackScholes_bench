@@ -34,10 +34,10 @@ def black_scholes ( nopt, rate, vol ):
 
 	return sum(np.stack((call, put)))
 
-def black_scholes_dask ( nopt, rate, vol, comm=None ):
+def black_scholes_mpi ( nopt, rate, vol, comm=None ):
 	res = black_scholes(nopt, rate, vol)
 	return comm.barrier()
 
 
 if __name__ == '__main__':
-	base_bs_erf.run("MPI-numpy", black_scholes_dask, mpi=True, pass_args=None)
+	base_bs_erf.run("MPI-numpy", black_scholes_mpi, mpi=True, pass_args=None)
