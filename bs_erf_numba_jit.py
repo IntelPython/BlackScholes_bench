@@ -7,7 +7,7 @@ import base_bs_erf
 import numba as nb
 from math import log, sqrt, exp, erf
 
-@nb.njit(error_model='numpy', fastmath=False)
+@nb.njit(error_model='numpy', fastmath=True)
 def black_scholes( nopt, price, strike, t, rate, vol, call, put):
     mr = -rate
     sig_sig_two = vol * vol * 2
