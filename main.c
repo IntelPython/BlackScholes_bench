@@ -28,7 +28,7 @@ int main(int argc, char * argv[])
     {
         sscanf(argv[1], "%d", &nopt);
         /* Read steps number of options parameter from command line */
-        if (argc == 3)
+        if (argc > 2)
         {
             sscanf(argv[2], "%d", &steps);
         }
