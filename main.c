@@ -14,6 +14,7 @@
 int main(int argc, char * argv[])
 {
     int nopt = 1 * 1024;
+    int steps = STEPS;
     tfloat *s0, *x, *t, *vcall_mkl, *vput_mkl, *vcall_compiler, *vput_compiler;
 
     clock_t t1 = 0, t2 = 0;
@@ -26,10 +27,15 @@ int main(int argc, char * argv[])
     else
     {
         sscanf(argv[1], "%d", &nopt);
+        /* Read steps number of options parameter from command line */
+        if (argc > 2)
+        {
+            sscanf(argv[2], "%d", &steps);
+        }
     }
 
     int i, j;
-    for(i = 0; i < STEPS; i++) {
+    for(i = 0; i < steps; i++) {
     
         /* Allocate arrays, generate input data */
         InitData( nopt, &s0, &x, &t, &vcall_compiler, &vput_compiler, &vcall_mkl, &vput_mkl );
