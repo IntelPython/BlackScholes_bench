@@ -37,10 +37,7 @@ TARGET      := black_scholes
 CFLAGS      += -g -O3
 CFLAGS      += -qopt-report
 CFLAGS      += -qopenmp
-CFLAGS      += -I./ -I$(MKLROOT)/include
-
-LDFLAGS     += -L$(MKLROOT)/lib/intel64
-LDFLAGS     += -lmkl_intel_lp64 -lmkl_intel_thread -lmkl_core -liomp5
+CFLAGS      += -I./
 
 PREC ?= d
 ifeq ($(PREC),d)
@@ -66,7 +63,7 @@ ifeq ($(TARGET_ARCH),host)
     CFLAGS += -xhost
 endif
 ifeq ($(TARGET_ARCH),auto)
-    CFLAGS += -xCORE-AVX2 -xCOMMON-AVX512
+    CFLAGS += -xCORE-AVX2 -xSSE4.2 -xCORE-AVX512 -xCOMMON-AVX512 -mprefer-vector-width=256
 endif
 
 ACC ?= ha
@@ -103,7 +100,7 @@ $(TARGET): $(SRC) black-scholes.c
 	$(CC) $(CPPFLAGS) $(CFLAGS) $^ -o $(TARGET)
 
 $(TARGET)_mkl: $(SRC) black-scholes_mkl.c
-	$(CC) $(CPPFLAGS) $(CFLAGS) $(LDFLAGS) -DBLACK_SCHOLES_MKL $^ -o $(TARGET)_mkl
+	$(CC) $(CPPFLAGS) $(CFLAGS) $(LDFLAGS) -qmkl -DBLACK_SCHOLES_MKL $^ -o $(TARGET)_mkl
 
 clean:
 	rm -rf *.o *.out *.optrpt $(foreach acc,ha la ep,black_scholes_$(acc) black_scholes_$(acc)_mkl)
