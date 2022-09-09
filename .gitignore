@@ -88,3 +88,13 @@ ENV/
 
 # Rope project settings
 .ropeproject
+
+# native-c build
+black-scholes.opt.yaml
+black-scholes_mkl.opt.yaml
+black_scholes_ha
+black_scholes_ha_mkl
+black_scholes_la
+black_scholes_la_mkl
+data_gen.opt.yaml
+main.opt.yaml
