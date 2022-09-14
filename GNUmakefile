@@ -63,7 +63,7 @@ ifeq ($(TARGET_ARCH),host)
     CFLAGS += -xhost
 endif
 ifeq ($(TARGET_ARCH),auto)
-    CFLAGS += -xSSE4.2 -axCORE-AVX2,COMMON-AVX512
+    CFLAGS += -xSSE4.2 -axCORE-AVX2,CORE-AVX512
 endif
 
 ACC ?= ha
