@@ -111,7 +111,7 @@ if [ ! -e "${INSTALLER}" ]; then
 fi
 chmod u+x "${INSTALLER}"
 
-# See https://software.intel.com/en-us/intel-system-studio-readme#inpage-nav-5-3
+# See https://www.intel.com/content/www/us/en/developer/articles/guide/download-documentation-intel-system-studio-current-previous.html#inpage-nav-5-3
 echo "# Generated silent configuration file" > "${SILENT_CFG}"
 
 # Accept EULA, valid values are: {accept, decline}
@@ -159,7 +159,7 @@ fi
 # You can revoke your consent at any time by choosing "Improvement Program Options" in the "Settings" tab of
 # the Intel(R) Software Manager and selecting the "I do NOT consent to the collection of my Information" option.
 # For more details please refer to this article:
-# https://software.intel.com/en-us/articles/software-improvement-program.
+# https://www.intel.com/content/www/us/en/developer/articles/community/software-improvement-program.html
 #
 # Yes - I consent to the collection of my Information
 # No  - I do NOT consent to the collection of my Information
