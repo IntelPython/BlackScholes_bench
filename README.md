@@ -2,7 +2,7 @@
 [![Build Status](https://travis-ci.org/IntelPython/BlackScholes_bench.svg?branch=master)](https://travis-ci.org/IntelPython/BlackScholes_bench)
 
 # BlackScholes benchmark
-Benchmark computing Black Scholes formula using different technologies
+Benchmark computing Black Scholes formula using different technologies.
 
 ## Prerequisites
 - `icc`, if compiling native benchmarks. Intel Distribution for Python*
