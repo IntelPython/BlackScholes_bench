@@ -12,17 +12,17 @@ Benchmark computing Black Scholes formula using different technologies.
 ## Setup
 
 ### Linux & Mac
-- Run `. activate-conda.sh` to install miniconda on Linux and Mac
-- Run `make` to build and run native benchmarks
-  - Run `make mkl` to build and run MKL version
-  - Run `make nomkl` to build and run non-MKL version
-  - Run `make black_scholes_mkl` to only build MKL version
-  - Run `make black_scholes` to only build non-MKL version
+- Run `. activate-conda.sh` to install miniconda on Linux and Mac.
+- Run `make` to build and run native benchmarks.
+  - Run `make mkl` to build and run MKL version.
+  - Run `make nomkl` to build and run non-MKL version.
+  - Run `make black_scholes_mkl` to only build MKL version.
+  - Run `make black_scholes` to only build non-MKL version.
 
 ### Windows
-- Download & install Miniconda3 and MSYS2
-- Run bash from MSYS2 and activate miniconda environment
-- Run `./install-conda-envs.sh` to install Python environments
+- Download & install Miniconda3 and MSYS2.
+- Run bash from MSYS2 and activate miniconda environment.
+- Run `./install-conda-envs.sh` to install Python environments.
 
 
 ## Usage
